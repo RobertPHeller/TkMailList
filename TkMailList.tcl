@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Jul 23 16:56:44 2024
-#  Last Modified : <240723.1720>
+#  Last Modified : <240723.2209>
 #
 #  Description	
 #
@@ -57,15 +57,12 @@ package require snit
 package require ReadConfiguration
 package require IconImage
 
-namespace eval TkRemoteBiff {
+namespace eval TkMailList {
     snit::type Configuration {
         ::ReadConfiguration::ConfigurationType \
               {"Mail Server Host" mailServer string mail.deepsoft.com} \
               {"User Name" userName string {}} \
               {"Password" password string {}} \
-              {"New Mail Sound" newMail infile /usr/share/sounds/freedesktop/stereo/message.oga} \
-              {"New Mail Notifications" notify boolean false} \
-              {"Check Interface (seconds)" interval integer 30 {1 150 1}}
     }
     Configuration load
     pack [frame .lf] -fill both -expand yes
@@ -90,9 +87,11 @@ namespace eval TkRemoteBiff {
           -command ::exit] -fill x
     wm protocol . WM_DELETE_WINDOW ".dismis invoke"
     .lf.list delete [.lf.list children {}]
-    set server [TkRemoteBiff::Configuration getoption mailServer]
-    set username [TkRemoteBiff::Configuration getoption userName]
-    set password [TkRemoteBiff::Configuration getoption password]
+    set server [TkMailList::Configuration getoption mailServer]
+    set username [TkMailList::Configuration getoption userName]
+    set password [TkMailList::Configuration getoption password]
+    #puts stderr [format {*** server is '%s', username is '%s', password is '%s'} \
+    #             $server $username $password]
     set chan [::imap4::open $server]
     ::imap4::login $chan $username $password
     ::imap4::examine $chan
