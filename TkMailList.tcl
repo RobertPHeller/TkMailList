@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Jul 23 16:56:44 2024
-#  Last Modified : <240924.0828>
+#  Last Modified : <250401.2022>
 #
 #  Description	
 #
@@ -58,11 +58,11 @@ package require ReadConfiguration
 package require IconImage
 
 namespace eval TkMailList {
-    proc subject_or_null {chan i} {
-        if {[catch {::imap4::msginfo $chan $i subject:} subject]} {
+    proc CatchFieldOrNULL {chan i field} {
+        if {[catch {::imap4::msginfo $chan $i $field} result]} {
             return ""
         } else {
-            return $subject
+            return $result
         }
     }
     snit::type Configuration {
@@ -108,10 +108,10 @@ namespace eval TkMailList {
         for {set i 1} {$i <= $count} {incr i} {
             set record [list \
                         [format {%d} $i] \
-                        [format {%s} [::imap4::msginfo $chan $i from:]] \
-                        [format {%s} [::imap4::msginfo $chan $i date:]] \
-                        [format {%d} [::imap4::msginfo $chan $i size]] \
-                        [format {%s} [subject_or_null $chan $i]]]
+                        [format {%s} [CatchFieldOrNULL $chan $i from:]] \
+                        [format {%s} [CatchFieldOrNULL $chan $i date:]] \
+                        [format {%d} [CatchFieldOrNULL $chan $i size]] \
+                        [format {%s} [CatchFieldOrNULL $chan $i subject:]]]
             .lf.list insert {} end -values $record
         }
     }
